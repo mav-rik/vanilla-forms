@@ -21,6 +21,8 @@ const insights = ref<{
   touched: [],
 })
 
+const toSend = ref()
+
 </script>
 
 <template>
@@ -34,6 +36,7 @@ const insights = ref<{
   <VuilessForm
     :data
     :insights
+    @submit="toSend = $event"
   >
 
     <VuilessField
@@ -105,15 +108,16 @@ const insights = ref<{
   <pre style="font-size: 10px;">{{ insights.errors }}</pre>
 </div>
 
-<div>
+<div v-if="!!insights.touched?.length">
   <!-- touched -->
   <h2>Touched</h2>
   <pre style="font-size: 10px;">{{ insights.touched }}</pre>
 </div>
 
-<div>
+<div v-if="!!toSend">
   <!-- sent form -->
   <h2>Sent form</h2>
+  <pre style="font-size: 10px;">{{ toSend }}</pre>
 </div>
 
 </div>
