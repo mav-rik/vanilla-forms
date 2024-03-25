@@ -14,8 +14,11 @@ const context = inject<TContext>('vuiless-form-context')
 const insights = inject<TVuilessInsights>('vuiless-form-insights')
 const register = inject<TVuilessFieldRegisterFn>('vuiless-form-register')
 
+// submitError stores error when the field is not
+// yet touched, but submit button is clicked
 const submitError = ref<string>()
 
+// registering field in form
 if (register) {
     register(props.name as string, () => {
         submitError.value = validate()
@@ -48,22 +51,19 @@ const error = computed<string | undefined>(() => {
     }
 })
 
-watch([touched], () => {
-    if (insights) {
+// processing insights if provided
+if (insights) {
+    watch([touched], () => {
         insights.touched = insights.touched || []
         if (insights.touched.findIndex(t => t === props.name) < 0) {
             insights.touched.push(props.name as string)
         }
-    }
-})
-
-watch([error], () => {
-    if (insights) {
+    })
+    watch([error], () => {
         insights.errors = insights.errors || {}
         insights.errors[props.name as string] = error.value || ''
-    }
-})
-
+    })
+}
 </script>
 
 <template>

@@ -3,13 +3,14 @@ import { provide } from 'vue'
 import type { TVuilessInsights, TVuilessFieldValidator, TVuilessFieldRegisterFn } from './vuiless.types'
 
 type Props = {
-    data: TFormData
-    context?: TContext
-    insights?: TVuilessInsights
+    data: TFormData         // form data
+    context?: TContext      // form context, can be used in validations logic
+    insights?: TVuilessInsights // for debugging
 }
 
 const props = defineProps<Props>()
 
+// registry of fields
 const registry: Record<string, { validate: TVuilessFieldValidator }> = {}
 
 const register: TVuilessFieldRegisterFn = (name: string, validate: TVuilessFieldValidator) => {
@@ -20,7 +21,6 @@ const register: TVuilessFieldRegisterFn = (name: string, validate: TVuilessField
 }
 
 provide('vuiless-form-register', register)
-
 provide('vuiless-form-data', props.data)
 provide('vuiless-form-context', props.context)
 provide('vuiless-form-insights', props.insights)
@@ -29,7 +29,7 @@ const emit = defineEmits<{
     (e: 'submit', data: TFormData): void
 }>()
 
-function onSubmit(event: SubmitEvent) {
+function onSubmit(event: Event) {
     event.preventDefault()
     let hasErrors = false
     for (const [field, r] of Object.entries(registry)) {
@@ -38,13 +38,12 @@ function onSubmit(event: SubmitEvent) {
         }
     }
     if (hasErrors) {
-        console.log('the form has errors')
+        // the form has errors
         return
     }
-    console.log('checks passed, firing submit')
+    // checks passed, firing submit
     emit('submit', props.data)
 }
-
 </script>
 
 <template>
