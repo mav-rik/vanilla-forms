@@ -16,9 +16,14 @@ export function isNumber(v: string) {
   return !Number.isNaN(Number(v)) || "Wrong Number";
 }
 
-export function firstOrLastName(v: string, d: MyForm | undefined) {
+export function firstOrLastName(
+  v: string,
+  d: MyForm | undefined,
+  context: { nameIsRequired: boolean } | undefined
+) {
   return (
-    !!d?.firstName || !!d?.lastName || "Please enter first name or last name"
+    context?.nameIsRequired && (
+    !!d?.firstName || !!d?.lastName || "Please enter first name or last name" ) || true
   );
 }
 

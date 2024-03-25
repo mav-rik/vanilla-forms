@@ -6,12 +6,16 @@ type Props = {
 
 const modelValue = defineModel()
 defineProps<Props>()
+
+const emit = defineEmits<{
+    (e: 'blur', event: FocusEvent): void
+}>()
 </script>
 
 <template>
     <label class="my-input" :class="{ error: !!error }">
         {{ label }}
-        <input v-model="modelValue" />
+        <input v-model="modelValue" @blur="emit('blur', $event)" />
         <div class="error-text">
             <span v-if="!!error">{{ error }}</span>
         </div>

@@ -7,7 +7,7 @@ import type { MyForm } from './form.type'
 import * as rules from './rules'
 
 const data = ref<MyForm>({
-  firstName: '',
+  firstName: 'Vasia',
   lastName: '',
   email: '',
   phone: '',
@@ -23,6 +23,7 @@ const insights = ref<{
 
 const toSend = ref()
 
+const fv = ref<'on-change'>('on-change')
 </script>
 
 <template>
@@ -33,23 +34,34 @@ const toSend = ref()
 
   <h2>Form</h2>
 
+  <select v-model="fv">
+    <option value="none">None</option>
+    <option value="on-change">On Change</option>
+    <option value="touched-on-blur">On Blur (Touched)</option>
+    <option value="on-blur">On Blur</option>
+    <option value="on-submit">On Submit</option>
+  </select>
   <VuilessForm
-    :data
+    :form-data="data"
     :insights
+    :form-context="{
+      nameIsRequired: true,
+    }"
+    :first-validation="fv"
     @submit="toSend = $event"
   >
+  
+    <template v-slot="form">
+
+    <button type="button" @click="form.resetValidations">Reset</button>
+
+    <button type="button" @click="form.clearFields">Clear</button>
 
     <VuilessField
       name="firstName"
       :rules="[rules.firstOrLastName]"
     >
-      <template v-slot="meta">
-        <MyInput
-          label="First Name (Cross Checks)"
-          v-model="data.firstName"
-          :error="meta.error"
-        />
-      </template>
+      <input v-model="data.firstName" hidden />
     </VuilessField>
 
     <VuilessField
@@ -61,6 +73,7 @@ const toSend = ref()
           label="Last Name (Cross Checks)"
           v-model="data.lastName"
           :error="meta.error"
+          @blur="meta.onBlur"
         />
       </template>
     </VuilessField>
@@ -74,6 +87,7 @@ const toSend = ref()
           label="Email"
           v-model="data.email"
           :error="meta.error"
+          @blur="meta.onBlur"
         />
       </template>
     </VuilessField>
@@ -87,11 +101,14 @@ const toSend = ref()
           label="Phone"
           v-model="data.phone"
           :error="meta.error"
+          @blur="meta.onBlur"
         />
       </template>
     </VuilessField>
 
     <button role="submit">Submit</button>
+
+    </template>
 
   </VuilessForm>
 </div>

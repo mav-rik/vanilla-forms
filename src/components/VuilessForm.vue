@@ -1,36 +1,62 @@
 <script setup lang="ts" generic="TFormData, TContext">
-import { provide } from 'vue'
-import type { TVuilessInsights, TVuilessFieldValidator, TVuilessFieldRegisterFn } from './vuiless.types'
+import { provide, ref, computed, nextTick } from 'vue'
+import type { TVuilessInsights, TVuilessFieldValidator, TVuilessFieldRegisterFn, TVuilessState } from './vuiless.types'
 
 type Props = {
-    data: TFormData         // form data
-    context?: TContext      // form context, can be used in validations logic
+    formData: TFormData         // form data
+    formContext?: TContext      // form context, can be used in validations logic
     insights?: TVuilessInsights // for debugging
+    firstValidation?: TVuilessState<TFormData, TContext>['firstValidation']
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+    firstValidation: 'on-change',
+})
 
 // registry of fields
-const registry: Record<string, { validate: TVuilessFieldValidator }> = {}
+const registry: Record<string, { validate: TVuilessFieldValidator, reset: () => void }> = {}
 
-const register: TVuilessFieldRegisterFn = (name: string, validate: TVuilessFieldValidator) => {
-    console.log('register ' + name)
-    registry[name as string] = {
-        validate,
-    }
+const register: TVuilessFieldRegisterFn = (fieldName: string, fieldCallbacks: {
+    validate: TVuilessFieldValidator
+    reset: () => void
+}) => {
+    registry[fieldName as string] = fieldCallbacks
 }
 
-provide('vuiless-form-register', register)
-provide('vuiless-form-data', props.data)
-provide('vuiless-form-context', props.context)
-provide('vuiless-form-insights', props.insights)
+const firstSubmitHappened = ref(false)
+
+const vuiless = computed(() => ({
+    firstSubmitHappened,
+    firstValidation: props.firstValidation,
+    register,
+    formData: props.formData,
+    formContext: props.formContext,
+    insights: props.insights,
+}))
+
+provide('vuiless', vuiless)
 
 const emit = defineEmits<{
     (e: 'submit', data: TFormData): void
 }>()
 
-function onSubmit(event: Event) {
-    event.preventDefault()
+function resetValidations() {
+    firstSubmitHappened.value = false
+    for (const fieldCallbacks of Object.values(registry)) {
+        fieldCallbacks.reset()
+    }
+}
+
+async function clearFields() {
+    for (const key of Object.keys(registry)) {
+        delete props.formData[key as keyof typeof props.formData]
+    }
+    await nextTick()
+    resetValidations()
+}
+
+function onSubmit() {
+    firstSubmitHappened.value = true
     let hasErrors = false
     for (const [field, r] of Object.entries(registry)) {
         if (r.validate() !== true) {
@@ -42,14 +68,18 @@ function onSubmit(event: Event) {
         return
     }
     // checks passed, firing submit
-    emit('submit', props.data)
+    emit('submit', props.formData)
 }
 </script>
 
 <template>
 
-<form @submit="onSubmit">
-    <slot></slot>
+<form @submit.prevent="onSubmit">
+    <div>{{ firstValidation }}</div>
+    <slot
+        :reset-validations="resetValidations"
+        :clear-fields="clearFields"
+    ></slot>
 </form>
 
 </template>
