@@ -18,12 +18,12 @@ export function isNumber(v: string) {
 
 export function firstOrLastName(
   v: string,
-  d: MyForm | undefined,
+  formData: MyForm | undefined,
   context: { nameIsRequired: boolean } | undefined
 ) {
   return (
     context?.nameIsRequired && (
-    !!d?.firstName || !!d?.lastName || "Please enter first name or last name" ) || true
+    !!formData?.firstName || !!formData?.lastName || "Please enter first name or last name" ) || true
   );
 }
 
