@@ -102,7 +102,8 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
         name="email"
         v-model="formData.email"
         placeholder="Email"
-        @blur="field.onBlur" :class="{ error: !!field.error }">
+        @blur="field.onBlur"
+        :class="{ error: !!field.error }">
       <div v-if="field.error">{{ field.error }}</div>
     </VuilessField>
 
@@ -222,7 +223,7 @@ The `first-validation` prop controls when validations are first triggered:
 - `"touched-on-blur"`: Validates a field once it has been changed and lost focus.
 - `"on-blur"`: Validates a field when it loses focus, regardless of whether its value has changed.
 - `"on-submit"`: Delays all validations until the form is submitted.
-- `"none"`: Disables automatic validation, allowing for manual trigger control.
+- `"none"`: Disables automatic validation.
 
 After the first validation trigger, subsequent validations for a field occur on every change to ensure the user receives immediate feedback as they correct errors.
 
