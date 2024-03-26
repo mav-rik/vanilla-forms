@@ -7,7 +7,7 @@ Vuiless Forms is a Vue.js library designed to facilitate form management, includ
 - **UI-Agnostic**: Works seamlessly with any UI components or libraries.
 - **Comprehensive Validation**: Supports a wide range of validation rules, including custom validations with access to the entire form data and context.
 - **Dynamic Form Context**: Allows passing dynamic context to forms for advanced validation scenarios.
-- **Flexible Validation Triggers**: Offers multiple strategies for when validations are triggered, including on change, on blur, on submit, or custom triggers.
+- **Flexible Validation Triggers**: Offers multiple strategies for when validations are triggered, including on change, on blur, on submit.
 - **Slot-Based Composition**: Utilizes Vue's slot mechanism for maximum flexibility in input and error display.
 
 ## Installation
