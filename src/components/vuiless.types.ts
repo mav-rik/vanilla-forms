@@ -1,27 +1,22 @@
-import type { Ref } from 'vue'
+import type { ComponentInstance, Ref } from 'vue'
 export type TVuilessRule<TValue, TFormData, TContext> = (
   v: TValue,
   data?: TFormData,
   context?: TContext
 ) => boolean | string;
 
-export type TVuilessInsights = {
-  errors?: Record<string, string>;
-  touched?: string[];
-}
-
 export type TVuilessFieldValidator = () => boolean | string;
 
-export type TVuilessFieldRegisterFn = (
-  name: string,
-  fns: {
+export type TVuilessFieldCallbacks = {
     validate: TVuilessFieldValidator
+    clearErrors: () => void
     reset: () => void
   }
-) => void;
+
+export type TVuilessFieldRegisterFn = (instance: ComponentInstance<any>, fieldCallbacks: TVuilessFieldCallbacks) => void;
 
 export type TVuilessState<TFormData, TContext> = {
-  firstSubmitHappened: Ref<boolean>;
+  firstSubmitHappened: boolean;
   firstValidation:
     | "on-change"
     | "touched-on-blur"
@@ -29,7 +24,7 @@ export type TVuilessState<TFormData, TContext> = {
     | "on-submit"
     | "none";
   register: TVuilessFieldRegisterFn;
+  unregister: (instance: ComponentInstance<any>) => void;
   formData: TFormData;
-  formContext: TContext;
-  insights: TVuilessInsights;
+  formContext?: TContext;
 };

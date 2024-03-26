@@ -7,18 +7,10 @@ import type { MyForm } from './form.type'
 import * as rules from './rules'
 
 const data = ref<MyForm>({
-  firstName: 'Vasia',
+  firstName: '',
   lastName: '',
   email: '',
   phone: '',
-})
-
-const insights = ref<{
-  errors?: Record<string, string>
-  touched?: string[] 
-}>({
-  errors: {},
-  touched: [],
 })
 
 const toSend = ref()
@@ -34,81 +26,77 @@ const fv = ref<'on-change'>('on-change')
 
   <h2>Form</h2>
 
-  <select v-model="fv">
-    <option value="none">None</option>
-    <option value="on-change">On Change</option>
-    <option value="touched-on-blur">On Blur (Touched)</option>
-    <option value="on-blur">On Blur</option>
-    <option value="on-submit">On Submit</option>
-  </select>
+  <label class="fv-select">
+    First Validation
+    <select v-model="fv">
+      <option value="none">None</option>
+      <option value="on-change">On Change</option>
+      <option value="touched-on-blur">On Blur (Touched)</option>
+      <option value="on-blur">On Blur</option>
+      <option value="on-submit">On Submit</option>
+    </select>
+  </label>
   <VuilessForm
     :form-data="data"
-    :insights
     :form-context="{
       nameIsRequired: true,
     }"
     :first-validation="fv"
     @submit="toSend = $event"
+    v-slot="form"
   >
-  
-    <template v-slot="form">
-
-    <button type="button" @click="form.resetValidations">Reset</button>
-
-    <button type="button" @click="form.clearFields">Clear</button>
-
     <VuilessField
-      name="firstName"
+      v-model="data.firstName"
       :rules="[rules.firstOrLastName]"
     >
       <input v-model="data.firstName" hidden />
     </VuilessField>
 
     <VuilessField
-      name="lastName"
+      v-model="data.lastName"
       :rules="[rules.firstOrLastName]"
+      v-slot="field"
     >
-      <template v-slot="meta">
         <MyInput
           label="Last Name (Cross Checks)"
           v-model="data.lastName"
-          :error="meta.error"
-          @blur="meta.onBlur"
+          :error="field.error"
+          @blur="field.onBlur"
         />
-      </template>
     </VuilessField>
 
     <VuilessField
-      name="email"
+      v-model="data.email"
       :rules="[rules.isRequired, rules.isEmail]"
+      v-slot="field"
     >
-      <template v-slot="meta">
         <MyInput
           label="Email"
           v-model="data.email"
-          :error="meta.error"
-          @blur="meta.onBlur"
+          :error="field.error"
+          @blur="field.onBlur"
         />
-      </template>
     </VuilessField>
 
     <VuilessField
-      name="phone"
+          v-model="data.phone"
       :rules="[rules.isRequired, rules.isNumber, rules.min(10), rules.max(12)]"
+      v-slot="field"
     >
-      <template v-slot="meta">
         <MyInput
           label="Phone"
           v-model="data.phone"
-          :error="meta.error"
-          @blur="meta.onBlur"
+          :error="field.error"
+          @blur="field.onBlur"
         />
-      </template>
     </VuilessField>
 
-    <button role="submit">Submit</button>
+    <button role="submit" class="primary">Submit</button>
 
-    </template>
+    <div class="buttons">
+      <button type="button" @click="form.clearErrors">Clear Errors</button>
+      <button type="button" @click="form.reset">Reset</button>
+    </div>
 
   </VuilessForm>
 </div>
@@ -117,18 +105,6 @@ const fv = ref<'on-change'>('on-change')
   <!-- data -->
   <h2>Data</h2>
   <pre style="font-size: 10px;">{{ data }}</pre>
-</div>
-
-<div>
-  <!-- errors -->
-  <h2>Errors</h2>
-  <pre style="font-size: 10px;">{{ insights.errors }}</pre>
-</div>
-
-<div v-if="!!insights.touched?.length">
-  <!-- touched -->
-  <h2>Touched</h2>
-  <pre style="font-size: 10px;">{{ insights.touched }}</pre>
 </div>
 
 <div v-if="!!toSend">
@@ -150,5 +126,45 @@ const fv = ref<'on-change'>('on-change')
 
 .flex > div {
   flex: 1;
+}
+
+button {
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  padding: 0 12px;
+  background-color: #4b545f;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #586b81;
+  color: white;
+}
+
+button.primary {
+  background-color: #2e5c8d;
+  color: white;
+  width: 100%;
+}
+
+button.primary:hover {
+  background-color: #2577c9;
+  color: white;
+}
+
+.buttons {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+.buttons > button {
+  flex: 1;
+}
+.fv-select {
+  display: block;
+  padding: 12px 0;
 }
 </style>

@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="TFormData, TContext">
-import { provide, ref, computed, nextTick } from 'vue'
-import type { TVuilessInsights, TVuilessFieldValidator, TVuilessFieldRegisterFn, TVuilessState } from './vuiless.types'
+import { provide, ref, computed, nextTick,  } from 'vue'
+import type { ComponentInstance } from 'vue'
+import type { TVuilessState, TVuilessFieldCallbacks } from './vuiless.types'
 
 type Props = {
     formData: TFormData         // form data
     formContext?: TContext      // form context, can be used in validations logic
-    insights?: TVuilessInsights // for debugging
     firstValidation?: TVuilessState<TFormData, TContext>['firstValidation']
 }
 
@@ -13,54 +13,48 @@ const props = withDefaults(defineProps<Props>(), {
     firstValidation: 'on-change',
 })
 
-// registry of fields
-const registry: Record<string, { validate: TVuilessFieldValidator, reset: () => void }> = {}
-
-const register: TVuilessFieldRegisterFn = (fieldName: string, fieldCallbacks: {
-    validate: TVuilessFieldValidator
-    reset: () => void
-}) => {
-    registry[fieldName as string] = fieldCallbacks
-}
-
-const firstSubmitHappened = ref(false)
-
-const vuiless = computed(() => ({
-    firstSubmitHappened,
-    firstValidation: props.firstValidation,
-    register,
-    formData: props.formData,
-    formContext: props.formContext,
-    insights: props.insights,
-}))
-
-provide('vuiless', vuiless)
-
 const emit = defineEmits<{
     (e: 'submit', data: TFormData): void
 }>()
 
-function resetValidations() {
+// registry of fields
+const fieldsRegistry: Map<ComponentInstance<any>, TVuilessFieldCallbacks> = new Map()
+const firstSubmitHappened = ref(false)
+
+const vuiless = computed<TVuilessState<TFormData, TContext>>(() => ({
+    firstSubmitHappened: firstSubmitHappened.value,
+    firstValidation: props.firstValidation,
+    register: (instance: ComponentInstance<any>, fieldCallbacks: TVuilessFieldCallbacks) => { fieldsRegistry.set(instance, fieldCallbacks) },
+    unregister: (instance: ComponentInstance<any>) => fieldsRegistry.delete(instance),
+    formData: props.formData,
+    formContext: props.formContext,
+}))
+
+provide('vuiless', vuiless)
+
+function clearErrors() {
     firstSubmitHappened.value = false
-    for (const fieldCallbacks of Object.values(registry)) {
-        fieldCallbacks.reset()
+    for (const { clearErrors } of fieldsRegistry.values()) {
+        clearErrors()
     }
 }
 
-async function clearFields() {
-    for (const key of Object.keys(registry)) {
-        delete props.formData[key as keyof typeof props.formData]
+async function resetForm() {
+    for (const { reset } of fieldsRegistry.values()) {
+        reset()
     }
     await nextTick()
-    resetValidations()
+    clearErrors()
 }
 
 function onSubmit() {
     firstSubmitHappened.value = true
     let hasErrors = false
-    for (const [field, r] of Object.entries(registry)) {
-        if (r.validate() !== true) {
-            hasErrors = true
+    if (props.firstValidation !== 'none') {
+        for (const { validate } of fieldsRegistry.values()) {
+            if (validate() !== true) {
+                hasErrors = true
+            }
         }
     }
     if (hasErrors) {
@@ -75,10 +69,9 @@ function onSubmit() {
 <template>
 
 <form @submit.prevent="onSubmit">
-    <div>{{ firstValidation }}</div>
     <slot
-        :reset-validations="resetValidations"
-        :clear-fields="clearFields"
+        :clear-errors="clearErrors"
+        :reset="resetForm"
     ></slot>
 </form>
 
