@@ -5,16 +5,17 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/vuiless-forms.d.ts",
-  "main": "./dist/vuiless-forms.ts.umd.cjs",
-  "module": "./dist/vuiless-forms.js",
+  "types": "dist/vuiless-forms.d.ts",
+  "main": "dist/vuiless-forms.js",
+  "module": "dist/vuiless-forms.js",
+  "sideEffects": false,
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "import": "./dist/vuiless-forms.js",
       "require": "./dist/vuiless-forms.ts.umd.cjs",
       "types": "./dist/vuiless-forms.d.ts"
-    },
-    "./style.css": "./dist/style.css"
+    }
   },
   "scripts": {
     "dev": "vite",
@@ -23,6 +24,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force"
   },
+  "license": "MIT",
   "dependencies": {
     "vue": "^3.4.21"
   },
