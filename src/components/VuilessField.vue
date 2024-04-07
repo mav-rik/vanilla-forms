@@ -86,6 +86,13 @@ function validate() {
 function onBlur() {
   blur.value = true
 }
+
+const model = {
+  v: computed({
+    get: () => modelValue.value,
+    set: v => (modelValue.value = v),
+  }),
+}
 </script>
 
 <template>
@@ -94,7 +101,7 @@ function onBlur() {
     :error="error"
     :form-data="vuiless?.formData"
     :form-context="vuiless?.formContext"
-    :value="{ v: modelValue }"
+    :model="model.v"
   >
   </slot>
 </template>

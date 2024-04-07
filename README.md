@@ -83,7 +83,7 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
       <input
         id="name"
         name="name"
-        v-model="formData.name"
+        v-model="field.model.value"
         placeholder="Name"
         @blur="field.onBlur"
         :class="{ error: !!field.error }"
@@ -100,7 +100,7 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
       <input
         id="email"
         name="email"
-        v-model="formData.email"
+        v-model="field.model.value"
         placeholder="Email"
         @blur="field.onBlur"
         :class="{ error: !!field.error }"
@@ -113,7 +113,7 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
       <input
         id="phone"
         name="phone"
-        v-model="formData.phone"
+        v-model="field.model.value"
         placeholder="Phone"
         @blur="field.onBlur"
         :class="{ error: !!field.error }"
@@ -122,12 +122,7 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
     </VuilessField>
 
     <VuilessField v-model="formData.participateInWorkshops" v-slot="field">
-      <input
-        type="checkbox"
-        id="workshops"
-        name="workshops"
-        v-model="formData.participateInWorkshops"
-      />
+      <input type="checkbox" id="workshops" name="workshops" v-model="field.model.value" />
       <label for="workshops">Participate in workshops?</label>
     </VuilessField>
 
@@ -140,7 +135,7 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
       <textarea
         id="workshopDetails"
         name="workshopDetails"
-        v-model="formData.workshopDetails"
+        v-model="field.model.value"
         placeholder="Workshop Details"
         @blur="field.onBlur"
         :class="{ error: !!field.error }"

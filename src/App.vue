@@ -44,14 +44,14 @@ const fv = ref<'on-change'>('on-change')
         @submit="toSend = $event"
         v-slot="form"
       >
-        <VuilessField v-model="data.firstName" :rules="[rules.firstOrLastName]">
-          <input v-model="data.firstName" hidden />
+        <VuilessField v-model="data.firstName" :rules="[rules.firstOrLastName]" v-slot="field">
+          <input v-model="field.model.value" hidden />
         </VuilessField>
 
         <VuilessField v-model="data.lastName" :rules="[rules.firstOrLastName]" v-slot="field">
           <MyInput
             label="Last Name (Cross Checks)"
-            v-model="data.lastName"
+            v-model="field.model.value"
             :error="field.error"
             @blur="field.onBlur"
           />
@@ -62,7 +62,12 @@ const fv = ref<'on-change'>('on-change')
           :rules="[rules.isRequired, rules.isEmail]"
           v-slot="field"
         >
-          <MyInput label="Email" v-model="data.email" :error="field.error" @blur="field.onBlur" />
+          <MyInput
+            label="Email"
+            v-model="field.model.value"
+            :error="field.error"
+            @blur="field.onBlur"
+          />
         </VuilessField>
 
         <VuilessField
@@ -70,7 +75,12 @@ const fv = ref<'on-change'>('on-change')
           :rules="[rules.isRequired, rules.isNumber, rules.min(10), rules.max(12)]"
           v-slot="field"
         >
-          <MyInput label="Phone" v-model="data.phone" :error="field.error" @blur="field.onBlur" />
+          <MyInput
+            label="Phone"
+            v-model="field.model.value"
+            :error="field.error"
+            @blur="field.onBlur"
+          />
         </VuilessField>
 
         <button role="submit" class="primary">Submit</button>
