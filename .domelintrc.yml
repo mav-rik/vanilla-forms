@@ -1,0 +1,3 @@
+ignoredRules:
+  - 'unicorn/import-style'
+  - 'import/no-default-export'

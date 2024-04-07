@@ -76,26 +76,26 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
     :form-context="formContext"
     first-validation="on-change"
     @submit="handleSubmit"
-    v-slot="form">
-
-    <VuilessField
-        v-model="formData.name"
-        :rules="[rules.isRequired]"
-        v-slot="field">
+    v-slot="form"
+  >
+    <VuilessField v-model="formData.name" :rules="[rules.isRequired]" v-slot="field">
       <label for="name">Name</label>
-      <input id="name"
+      <input
+        id="name"
         name="name"
         v-model="formData.name"
         placeholder="Name"
         @blur="field.onBlur"
-        :class="{ error: !!field.error }">
+        :class="{ error: !!field.error }"
+      />
       <div v-if="field.error">{{ field.error }}</div>
     </VuilessField>
 
     <VuilessField
-        v-model="formData.email"
-        :rules="[rules.isRequired, rules.isEmail]"
-        v-slot="field">
+      v-model="formData.email"
+      :rules="[rules.isRequired, rules.isEmail]"
+      v-slot="field"
+    >
       <label for="email">Email</label>
       <input
         id="email"
@@ -103,14 +103,12 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
         v-model="formData.email"
         placeholder="Email"
         @blur="field.onBlur"
-        :class="{ error: !!field.error }">
+        :class="{ error: !!field.error }"
+      />
       <div v-if="field.error">{{ field.error }}</div>
     </VuilessField>
 
-    <VuilessField
-        v-model="formData.phone"
-        :rules="[rules.phoneNumber]"
-        v-slot="field">
+    <VuilessField v-model="formData.phone" :rules="[rules.phoneNumber]" v-slot="field">
       <label for="phone">Phone</label>
       <input
         id="phone"
@@ -118,25 +116,26 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
         v-model="formData.phone"
         placeholder="Phone"
         @blur="field.onBlur"
-        :class="{ error: !!field.error }">
+        :class="{ error: !!field.error }"
+      />
       <div v-if="field.error">{{ field.error }}</div>
     </VuilessField>
 
-    <VuilessField
-        v-model="formData.participateInWorkshops"
-        v-slot="field">
+    <VuilessField v-model="formData.participateInWorkshops" v-slot="field">
       <input
         type="checkbox"
         id="workshops"
         name="workshops"
-        v-model="formData.participateInWorkshops">
+        v-model="formData.participateInWorkshops"
+      />
       <label for="workshops">Participate in workshops?</label>
     </VuilessField>
 
     <VuilessField
-        v-model="formData.workshopDetails"
-        :rules="[rules.workshopDetailsRequired]"
-        v-slot="field">
+      v-model="formData.workshopDetails"
+      :rules="[rules.workshopDetailsRequired]"
+      v-slot="field"
+    >
       <label for="workshopDetails">Workshop Details</label>
       <textarea
         id="workshopDetails"
@@ -144,7 +143,8 @@ Next, we'll use `VuilessForm` and `VuilessField` in the template, incorporating 
         v-model="formData.workshopDetails"
         placeholder="Workshop Details"
         @blur="field.onBlur"
-        :class="{ error: !!field.error }"></textarea>
+        :class="{ error: !!field.error }"
+      ></textarea>
       <div v-if="field.error">{{ field.error }}</div>
     </VuilessField>
 
@@ -176,7 +176,7 @@ Finally, we'll add a submission handler and any additional logic required for th
 
 ```typescript
 function handleSubmit(formData: FormData) {
-  console.log('Submitting form data:', formData);
+  console.log('Submitting form data:', formData)
   // Here you would typically send the form data to a server or perform other actions based on the form submission.
 }
 ```
@@ -188,24 +188,24 @@ Here's a brief look at how some of the custom validation rules might be implemen
 ```typescript
 // validationRules.ts
 export function isRequired(value: string): boolean | string {
-  return !!value || 'This field is required.';
+  return !!value || 'This field is required.'
 }
 
 export function isEmail(value: string): boolean | string {
-  return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) || 'Invalid email address';
+  return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) || 'Invalid email address'
 }
 
 export function min(length: number) {
-  return (value: string) => value.length >= length || `Minimum length is ${length}`;
+  return (value: string) => value.length >= length || `Minimum length is ${length}`
 }
 
 export function max(length: number) {
-  return (value: string) => value.length <= length || `Maximum length is ${length}`;
+  return (value: string) => value.length <= length || `Maximum length is ${length}`
 }
 
 export function phoneNumberValidator(phone: string, country: string): boolean | string {
   // Placeholder for actual phone number validation logic, which would vary by country
-  return phone.length > 0 || 'Phone number is required'; // Simplified example
+  return phone.length > 0 || 'Phone number is required' // Simplified example
 }
 ```
 

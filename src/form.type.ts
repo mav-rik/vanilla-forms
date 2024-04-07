@@ -1,4 +1,4 @@
-export type MyForm = {
+export interface MyForm {
   firstName: string
   lastName: string
   email: string

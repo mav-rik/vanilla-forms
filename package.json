@@ -3,6 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/vuiless-forms.d.ts",
+  "main": "./dist/vuiless-forms.ts.umd.cjs",
+  "module": "./dist/vuiless-forms.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vuiless-forms.js",
+      "require": "./dist/vuiless-forms.ts.umd.cjs",
+      "types": "./dist/vuiless-forms.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -11,17 +25,30 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue": "^3.4.21"
   },
   "devDependencies": {
+    "vue-router": "^4.3.0",
     "@tsconfig/node20": "^20.1.2",
     "@types/node": "^20.11.28",
+    "@typescript-eslint/eslint-plugin": "6.3.0",
+    "@typescript-eslint/parser": "6.3.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/tsconfig": "^0.5.1",
+    "eslint": "8.55.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-array-func": "4.0.0",
+    "eslint-plugin-import": "2.29.0",
+    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "eslint-plugin-sonarjs": "0.23.0",
+    "eslint-plugin-unicorn": "49.0.0",
+    "eslint-plugin-yml": "1.10.0",
     "npm-run-all2": "^6.1.2",
+    "prettier": "3.1.1",
     "typescript": "~5.4.0",
     "vite": "^5.1.6",
+    "vite-plugin-dts": "^3.8.1",
     "vue-tsc": "^2.0.6"
   }
 }

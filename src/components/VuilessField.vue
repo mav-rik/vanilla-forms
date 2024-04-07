@@ -1,11 +1,10 @@
 <script setup lang="ts" generic="TValue, TFormData, TContext">
 import { inject, ref, watch, computed, getCurrentInstance, onUnmounted } from 'vue'
-import type { ComputedRef} from 'vue'
+import type { ComputedRef } from 'vue'
 import type { TVuilessRule, TVuilessState } from './vuiless.types'
 
 type Props = {
-    // name: keyof TFormData
-    rules?: TVuilessRule<TValue, TFormData, TContext>[]
+  rules?: TVuilessRule<TValue, TFormData, TContext>[]
 }
 const props = defineProps<Props>()
 const modelValue = defineModel<TValue>()
@@ -19,79 +18,83 @@ const touched = ref(false)
 const blur = ref(false)
 
 const isValidationActive = computed(() => {
-    if (vuiless?.value?.firstValidation) {
-        switch (vuiless.value.firstValidation) {
-            case 'on-change':
-                return vuiless.value.firstSubmitHappened || touched.value
-            case 'touched-on-blur':
-                return vuiless.value.firstSubmitHappened || blur.value && touched.value
-            case 'on-blur':
-                return vuiless.value.firstSubmitHappened || blur.value
-            case 'on-submit':
-                return vuiless.value.firstSubmitHappened
-            case 'none':
-                return false
-        }
+  if (vuiless?.value?.firstValidation) {
+    switch (vuiless.value.firstValidation) {
+      case 'on-change':
+        return vuiless.value.firstSubmitHappened || touched.value
+      case 'touched-on-blur':
+        return vuiless.value.firstSubmitHappened || (blur.value && touched.value)
+      case 'on-blur':
+        return vuiless.value.firstSubmitHappened || blur.value
+      case 'on-submit':
+        return vuiless.value.firstSubmitHappened
+      case 'none':
+        return false
     }
-    return false
+  }
+  return false
 })
 
 const error = computed<string | undefined>(() => {
-    if (isValidationActive.value || submitError.value) {
-        return validate()
-    }
+  if (isValidationActive.value || submitError.value) {
+    return validate()
+  }
 })
 
 watch([modelValue], () => {
-    submitError.value = undefined
-    touched.value = true
+  submitError.value = undefined
+  touched.value = true
 })
 
 onUnmounted(() => {
-    vuiless?.value?.unregister(getCurrentInstance())
+  vuiless?.value?.unregister(getCurrentInstance())
 })
 
 // registering field in form
 if (vuiless?.value) {
-    vuiless.value.register(getCurrentInstance(), {
-        validate: () => {
-            submitError.value = validate()
-            return submitError.value || true
-        },
-        clearErrors: () => {
-            touched.value = false
-            blur.value = false
-            submitError.value = undefined
-        },
-        reset: () => {
-            modelValue.value = '' as TValue
-        },
-    })
+  vuiless.value.register(getCurrentInstance(), {
+    validate: () => {
+      submitError.value = validate()
+      return submitError.value || true
+    },
+    clearErrors: () => {
+      touched.value = false
+      blur.value = false
+      submitError.value = undefined
+    },
+    reset: () => {
+      modelValue.value = '' as TValue
+    },
+  })
 }
 
 function validate() {
-    if (props.rules?.length) {
-        for (const rule of props.rules) {
-            const result = rule(modelValue.value as TValue, vuiless?.value?.formData, vuiless?.value?.formContext)
-            if (result !== true) {
-                return result || 'Wrong value'
-            }
-        }
+  if (props.rules?.length) {
+    for (const rule of props.rules) {
+      const result = rule(
+        modelValue.value as TValue,
+        vuiless?.value?.formData,
+        vuiless?.value?.formContext
+      )
+      if (result !== true) {
+        return result || 'Wrong value'
+      }
     }
+  }
 }
 
 function onBlur() {
-    blur.value = true
+  blur.value = true
 }
 </script>
 
 <template>
-<slot
+  <slot
     :on-blur="onBlur"
     :error="error"
     :form-data="vuiless?.formData"
     :form-context="vuiless?.formContext"
     :value="{ v: modelValue }"
->
-</slot>
+  >
+  </slot>
 </template>

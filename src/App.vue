@@ -19,101 +19,81 @@ const fv = ref<'on-change'>('on-change')
 </script>
 
 <template>
-<div class="flex">
+  <div class="flex">
+    <div>
+      <!-- form -->
 
-<div>
-  <!-- form -->
+      <h2>Form</h2>
 
-  <h2>Form</h2>
+      <label class="fv-select">
+        First Validation
+        <select v-model="fv">
+          <option value="none">None</option>
+          <option value="on-change">On Change</option>
+          <option value="touched-on-blur">On Blur (Touched)</option>
+          <option value="on-blur">On Blur</option>
+          <option value="on-submit">On Submit</option>
+        </select>
+      </label>
+      <VuilessForm
+        :form-data="data"
+        :form-context="{
+          nameIsRequired: true,
+        }"
+        :first-validation="fv"
+        @submit="toSend = $event"
+        v-slot="form"
+      >
+        <VuilessField v-model="data.firstName" :rules="[rules.firstOrLastName]">
+          <input v-model="data.firstName" hidden />
+        </VuilessField>
 
-  <label class="fv-select">
-    First Validation
-    <select v-model="fv">
-      <option value="none">None</option>
-      <option value="on-change">On Change</option>
-      <option value="touched-on-blur">On Blur (Touched)</option>
-      <option value="on-blur">On Blur</option>
-      <option value="on-submit">On Submit</option>
-    </select>
-  </label>
-  <VuilessForm
-    :form-data="data"
-    :form-context="{
-      nameIsRequired: true,
-    }"
-    :first-validation="fv"
-    @submit="toSend = $event"
-    v-slot="form"
-  >
-    <VuilessField
-      v-model="data.firstName"
-      :rules="[rules.firstOrLastName]"
-    >
-      <input v-model="data.firstName" hidden />
-    </VuilessField>
+        <VuilessField v-model="data.lastName" :rules="[rules.firstOrLastName]" v-slot="field">
+          <MyInput
+            label="Last Name (Cross Checks)"
+            v-model="data.lastName"
+            :error="field.error"
+            @blur="field.onBlur"
+          />
+        </VuilessField>
 
-    <VuilessField
-      v-model="data.lastName"
-      :rules="[rules.firstOrLastName]"
-      v-slot="field"
-    >
-        <MyInput
-          label="Last Name (Cross Checks)"
-          v-model="data.lastName"
-          :error="field.error"
-          @blur="field.onBlur"
-        />
-    </VuilessField>
-
-    <VuilessField
-      v-model="data.email"
-      :rules="[rules.isRequired, rules.isEmail]"
-      v-slot="field"
-    >
-        <MyInput
-          label="Email"
+        <VuilessField
           v-model="data.email"
-          :error="field.error"
-          @blur="field.onBlur"
-        />
-    </VuilessField>
+          :rules="[rules.isRequired, rules.isEmail]"
+          v-slot="field"
+        >
+          <MyInput label="Email" v-model="data.email" :error="field.error" @blur="field.onBlur" />
+        </VuilessField>
 
-    <VuilessField
+        <VuilessField
           v-model="data.phone"
-      :rules="[rules.isRequired, rules.isNumber, rules.min(10), rules.max(12)]"
-      v-slot="field"
-    >
-        <MyInput
-          label="Phone"
-          v-model="data.phone"
-          :error="field.error"
-          @blur="field.onBlur"
-        />
-    </VuilessField>
+          :rules="[rules.isRequired, rules.isNumber, rules.min(10), rules.max(12)]"
+          v-slot="field"
+        >
+          <MyInput label="Phone" v-model="data.phone" :error="field.error" @blur="field.onBlur" />
+        </VuilessField>
 
-    <button role="submit" class="primary">Submit</button>
+        <button role="submit" class="primary">Submit</button>
 
-    <div class="buttons">
-      <button type="button" @click="form.clearErrors">Clear Errors</button>
-      <button type="button" @click="form.reset">Reset</button>
+        <div class="buttons">
+          <button type="button" @click="form.clearErrors">Clear Errors</button>
+          <button type="button" @click="form.reset">Reset</button>
+        </div>
+      </VuilessForm>
     </div>
 
-  </VuilessForm>
-</div>
+    <div>
+      <!-- data -->
+      <h2>Data</h2>
+      <pre style="font-size: 10px">{{ data }}</pre>
+    </div>
 
-<div>
-  <!-- data -->
-  <h2>Data</h2>
-  <pre style="font-size: 10px;">{{ data }}</pre>
-</div>
-
-<div v-if="!!toSend">
-  <!-- sent form -->
-  <h2>Sent form</h2>
-  <pre style="font-size: 10px;">{{ toSend }}</pre>
-</div>
-
-</div>
+    <div v-if="!!toSend">
+      <!-- sent form -->
+      <h2>Sent form</h2>
+      <pre style="font-size: 10px">{{ toSend }}</pre>
+    </div>
+  </div>
 </template>
 
 <style scoped>
