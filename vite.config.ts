@@ -18,7 +18,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/lib.ts'),
       name: 'vuiless-forms',
-      fileName: 'vuiless-forms.ts',
+      fileName: 'vuiless-forms',
     },
     rollupOptions: {
       external: ['vue'],

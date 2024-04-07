@@ -13,7 +13,7 @@
     "./package.json": "./package.json",
     ".": {
       "import": "./dist/vuiless-forms.js",
-      "require": "./dist/vuiless-forms.ts.umd.cjs",
+      "require": "./dist/vuiless-forms.umd.cjs",
       "types": "./dist/vuiless-forms.d.ts"
     }
   },
